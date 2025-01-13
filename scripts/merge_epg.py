@@ -47,13 +47,13 @@ for programme in main_root.findall('programme'):
     if programme.get('channel') in channels_to_remove:
         main_root.remove(programme)
 
-# Gabungkan channel dari file tambahan ke file utama
-for channel in additional_root.findall('channel'):
-    main_root.append(channel)
-
-# Gabungkan programme dari file tambahan ke file utama (jika ada)
-for programme in additional_root.findall('programme'):
-    main_root.append(programme)
+# Gabungkan channel dan programme dari file tambahan ke file utama
+# Namun, jangan menggabungkan elemen xmltv itu sendiri
+for element in additional_root:
+    if element.tag == 'channel':
+        main_root.append(element)
+    elif element.tag == 'programme':
+        main_root.append(element)
 
 # Simpan hasil gabungan ke file baru
 output_file = 'merged_epg.xml'
