@@ -11,18 +11,28 @@ additional_url = 'https://github.com/genotip2/epg/raw/refs/heads/master/super.gu
 def read_gzipped_xml(url):
     response = requests.get(url)
     if response.status_code == 200:
+        # Membaca file .gz dari response
         with gzip.GzipFile(fileobj=BytesIO(response.content)) as f:
+            # Mendekompresi dan membaca file XML
             return ET.parse(f)  # Kembalikan objek ElementTree
     else:
         raise Exception(f'Gagal mengunduh file: {url}, status code: {response.status_code}')
 
 # Unduh dan proses file utama
 main_tree = read_gzipped_xml(main_url)
-main_root = main_tree.getroot()  # Akses root dari main_tree
+main_root = main_tree.getroot()  # Akses root dari main_tree (root XML file utama)
+
+# Pastikan main_root adalah objek Element
+if not isinstance(main_root, ET.Element):
+    raise TypeError("main_root harus berupa objek Element")
 
 # Unduh dan proses file tambahan
 additional_tree = read_gzipped_xml(additional_url)
-additional_root = additional_tree.getroot()  # Akses root dari additional_tree
+additional_root = additional_tree.getroot()  # Akses root dari additional_tree (root XML file tambahan)
+
+# Pastikan additional_root adalah objek Element
+if not isinstance(additional_root, ET.Element):
+    raise TypeError("additional_root harus berupa objek Element")
 
 # Channel ID yang ingin dihapus hanya dari file utama
 channels_to_remove = ['SCTV.id', 'GTV.id']
